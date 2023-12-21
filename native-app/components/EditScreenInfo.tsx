@@ -80,10 +80,6 @@ export default function EditScreenInfo({ path }: { path: string }) {
   }:3001/machine-health`;
 
   const savePart = useCallback(async () => {
-    console.log("machineData", machineData);
-    console.log("machineName", machineName);
-    console.log("partName", partName);
-    console.log("partValue", partValue);
     try {
       const newMachineData = machineData
         ? JSON.parse(JSON.stringify(machineData))
@@ -97,21 +93,11 @@ export default function EditScreenInfo({ path }: { path: string }) {
 
       await updateMachineData(newMachineData);
       setIsSaved(true);
-      // setTimeout(() => {
-      //   setIsSaved(false);
-      // }, 2000);
     } catch (error) {
       console.error(error);
       throw error; // Handle API errors appropriately
     }
   }, [machineData, updateMachineData, machineName, partName, partValue]);
-
-  //Doing this because we're not using central state like redux
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     loadMachineData();
-  //   }, []),
-  // );
 
   return (
     <View>

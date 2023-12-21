@@ -1,14 +1,42 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native";
 import React, { useState } from "react";
 import AppTextInput from "../../components/AppTextInput";
 import { PrimaryButton } from "../../components/Button";
-import { Link, router } from "expo-router";
-
+import { Link, Redirect, router } from "expo-router";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [passWord, setPassword] = useState("");
+  const auth = getAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [value, setValue] = React.useState({
+    email: "",
+    password: "",
+    error: "",
+  });
 
+  async function handleSignIn() {
+    if (value.email === "" || value.password === "") {
+      setValue({
+        ...value,
+        error: "Email and password are mandatory.",
+      });
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, value.email, value.password);
+      setIsAuthenticated(true);
+      ToastAndroid.show("Login successfully!", ToastAndroid.SHORT);
+    } catch (error) {
+      setValue({
+        ...value,
+        error: error.message,
+      });
+    }
+  }
+  if (isAuthenticated) {
+    return <Redirect href="/(tabs)/" />;
+  }
 
   return (
     <View style={styles.root}>
@@ -25,32 +53,31 @@ const LoginScreen = () => {
         <View style={styles.textInput}>
           <AppTextInput
             placeholder="enter email"
-            value={email}
-            onChangeText={setEmail}
+            value={value.email}
+            onChangeText={(text) => setValue({ ...value, email: text })}
             textContentType="emailAddress"
           />
         </View>
         <View style={styles.textInput}>
           <AppTextInput
             placeholder="enter password"
-            value={passWord}
-            onChangeText={setPassword}
+            value={value.password}
+            onChangeText={(text) => setValue({ ...value, password: text })}
           />
         </View>
         <View style={styles.reg}>
           <Text>Don't have an account?</Text>
+          {value.error ? (
+            <Text style={{ color: "red" }}>{value.error}</Text>
+          ) : null}
+
           <Link href="/auth/Register" style={styles.link}>
             Sign up
           </Link>
         </View>
       </ScrollView>
       <View style={styles.btn}>
-        <PrimaryButton
-          title="Login"
-          onPress={() => {
-            router.push("/(tabs)/");
-          }}
-        />
+        <PrimaryButton title="Login" onPress={handleSignIn} />
       </View>
     </View>
   );

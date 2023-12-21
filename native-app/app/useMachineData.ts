@@ -2,9 +2,14 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetMachine, updateMachine } from "../redux/features/machineSlice";
 
+interface RootState {
+  machines: {
+    machineData: any; // replace 'any' with the type of machineData
+  };
+}
 export const useMachineData = () => {
   const dispatch = useDispatch();
-  const { machineData } = useSelector((state) => state.machines);
+  const { machineData } = useSelector((state: RootState) => state.machines);
   console.log(machineData, "machine data");
 
   const resetMachineData = useCallback(async () => {
@@ -12,6 +17,10 @@ export const useMachineData = () => {
   }, []);
 
   const updateMachineData = useCallback(async (newMachineData) => {
+    dispatch(updateMachine(newMachineData));
+  }, []);
+
+  const getScoreHistory = useCallback(async (newMachineData) => {
     dispatch(updateMachine(newMachineData));
   }, []);
 

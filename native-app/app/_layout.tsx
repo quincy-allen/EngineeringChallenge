@@ -11,6 +11,7 @@ import { useColorScheme } from "react-native";
 import { Provider } from "react-redux";
 import { persistor, store } from "../redux";
 import { PersistGate } from "redux-persist/integration/react";
+import './firebase/firebase';
 
 export {
   // Catch any errors thrown by the Layout component.

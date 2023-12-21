@@ -3,7 +3,7 @@ import { Text, View } from "../../components/Themed";
 import { Link } from "expo-router";
 import axios from "axios";
 import { useMachineData } from "../useMachineData";
-import { useCallback} from "react";
+import { useCallback } from "react";
 import { PartsOfMachine } from "../../components/PartsOfMachine";
 import { MachineScore } from "../../components/MachineScore";
 
@@ -16,15 +16,18 @@ if (__DEV__) {
   }:3001/machine-health`;
 }
 
-export default function StateScreen() {
-  const { machineData, resetMachineData, setScores } = useMachineData();
+type MachineData = {
+  scores: any; // Replace 'any' with the actual type of 'scores'
+  // Include other properties of machineData here
+  machines: any;
+};
 
-  //Doing this because we're not using central state like redux
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     loadMachineData();
-  //   }, []),
-  // );
+export default function StateScreen() {
+  const { machineData, resetMachineData, setScores } = useMachineData() as {
+    machineData: MachineData;
+    resetMachineData: Function;
+    setScores: Function;
+  };
 
   const calculateHealth = useCallback(async () => {
     try {
@@ -109,7 +112,7 @@ export default function StateScreen() {
       <View style={styles.resetButton}>
         <Button
           title="Reset Machine Data"
-          onPress={resetMachineData}
+          onPress={() => resetMachineData()}
           color="#FF0000"
         />
       </View>
